@@ -100,6 +100,37 @@
                 "n° run, lunghezza `N-1 `: `2/(N!) `",
                 "Ci sono delle tavole che danno le regioni critiche al variare del numero di run e della loro lunghezza."
             ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica diretta",
+            "lines": [
+                "Si consideri una funzione `f(x)` non negativa e continua in `[a, b]`, tale che `\\int_a^bf(x)dx = 1` e si chiami `F(x)` la sua primitiva",
+                "Si generi inoltre un numero casuale uniforme `r \\in [0, 1]` e si cerchi il valore `x_r \\in [a, b]` tale che",
+                "`r = F(x_r) = \\int_a^(x_r) f(t)dt`  e, se possibile,  `x_r = F^(-1)(r)`",
+                "Si dimostra che `x_r` ha una distribuzione di probabilità `f(x)`",
+                "Questo approccio, sebbene ideale matematicamente, non è sempre realizzabile, in quanto prevede l'esistenza sia la funzione primitiva che la sua inversa"
+            ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica della reiezione",
+            "lines": [
+                "Si consideri una funzione `f(x)` limitata in `[a, b]` e `c \\in \\RR_+` tale che",
+                "`f(x) <= c \\forall x \\in [a, b]`",
+                "Presi due numeri casuali `r_1, r_1^'` con distribuzione uniforme in `[0, 1]` e si calcola",
+                "`x_1 = a + (b-a)r_1` e `f_1 = r_1^'c`",
+                "Se `f_1<=f(x_1)` allora si prende `x_1` come nuovo numero casuale con distribuzione `f(x)`, altrimenti lo si rifiuta",
+                "Questo approccio è molto più semplice da realizzare, ma presenta uno spreco non sempre trascurabile di numeri che saranno rifiutati"
+            ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica combinata",
+            "lines": [
+                "Si consideri una funzione `f(x)` limitata in `[a, b]` e `g(x)` una funzione di distribuzione della probabilità tale che",
+                "`f(x) <= kg(x) \\forall x \\in [a, b]`",
+                "Presi due numeri casuali `x_1, r_1` con distribuzioni rispettivamente `g(x)` e uniforme in `[0, 1]` e si calcola",
+                "Si accetta `x_1` se `r_1k(g_1) < f(x_1)`, altrimenti si rifiuta il valore",
+                "Il vantaggio rispetto alla tecnica della reiezione è che la zone di rifiuto è più piccola, il che porta ad uno spreco inferiore di risorse"
+            ]
         }
     ]
 }
