@@ -47,7 +47,7 @@ export class RngdataService {
   };
 
   constructor(private _rngSimulator: RNGSimulatorService) {
-    this._rngGenerator = _rngSimulator.rngTs;
+    this._rngGenerator = _rngSimulator.rngJS;
     this.function = 'const'
   }
 
@@ -165,7 +165,7 @@ export class RngdataService {
   set rngGenerator(newGenerator: string) {
     switch (newGenerator) {
       case "javascript":
-        this._rngGenerator = this._rngSimulator.rngTs;
+        this._rngGenerator = this._rngSimulator.rngJS;
         break;
       case "java":
         this._rngGenerator = this._rngSimulator.rngJava;
@@ -177,7 +177,7 @@ export class RngdataService {
 
   get rngGenerator(): string {
     switch (this._rngGenerator) {
-      case this._rngSimulator.rngTs:
+      case this._rngSimulator.rngJS:
         return 'javascript';
       case this._rngSimulator.rngJava:
         return 'java';

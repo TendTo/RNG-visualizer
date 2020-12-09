@@ -9,16 +9,11 @@ class RngJava {
 
   private seed = [0, 0, 0]
 
-  private _desc = `
-    \\( x_{i+1} = (1140671485x_i + 12820163) mod 2^{24} \\)
-  `
-
   constructor(seed: number = 1) {
     this.initSeed(seed);
   }
 
   private next(shift: number) {
-
     let carry = this.ADD;
 
     let r0 = (this.seed[0] * this.MULT[0]) + carry;
@@ -43,10 +38,6 @@ class RngJava {
     this.seed[2] = ((seed / this.p2_32) & this.MASK) ^ this.MULT[2];
   }
 
-  get desc(): string {
-    return this._desc;
-  }
-
   get seedNeeded(): boolean {
     return true;
   }
@@ -60,31 +51,62 @@ class RngJava {
   }
 }
 
-class RngTs {
-  private _desc = `
-  Anything goes
-  `
+class RngJS {
+  private readonly p2_16 = 0x0000000010000;
+  private readonly p2_27 = 0x0000008000000;
+  private readonly p2_32 = 0x0000100000000;
+  private readonly MASK = 0xffff;
+  private readonly MULT = [0xe66d, 0xdeec, 0x0005]
+
+  private _seed = { a: 0, b: 0, c: 0, d: 0 };
+
   constructor() {
   }
 
   get seedNeeded(): boolean {
-    return false;
+    return true;
+  }
+
+  // private xorshift128_init(seed: number) {
+  //   this._seed.seed = seed;
+  //   this._status = { a: 0, b: 0, c: 0, d: 0 };
+
+  //   let tmp = this.splitmix64();
+  //   this._status.a = tmp;
+  //   this._status.b = (tmp >> 32);
+
+  //   tmp = this.splitmix64();
+  //   this._status.c = tmp;
+  //   this._status.d = (tmp >> 32);
+  // }
+
+  private initSeed(seed: number) {
+    this._seed.a = (seed & this.MASK) ^ this.MULT[0];
+    this._seed.b = ((seed / this.p2_16) & this.MASK) ^ this.MULT[1];
+    this._seed.c = ((seed / this.p2_32) & this.MASK) ^ this.MULT[2];
+    this._seed.d = (seed & this.MASK) ^ this.MULT[2];
   }
 
   setSeed(seed: number) {
-  }
-
-  get desc(): string {
-    return this._desc;
+    this.initSeed(seed);
   }
 
   random(): number {
-    return Math.random();
+    let a = this._seed.a, b = this._seed.b, c = this._seed.c, d = this._seed.d;
+    this._seed.a = c; this._seed.b = d;
+
+    var t = b << 9, r = a * 5; 
+    r = (r << 7 | r >>> 25) * 9;
+    c ^= a; d ^= b;
+    b ^= c; a ^= d; c ^= t;
+    d = d << 11 | d >>> 21;
+
+    this._seed.c = r; this._seed.d = t;
+    return (r >>> 0) / 4294967296;
   }
 }
 
 export interface RngGenerator {
-  readonly desc: string;
   readonly seedNeeded: boolean;
   setSeed(seed: Number): void;
   random(): number;
@@ -92,7 +114,7 @@ export interface RngGenerator {
 
 export class RNGSimulatorService {
   private _rngJava = new RngJava()
-  private _rngTs = new RngTs()
+  private _rngJS = new RngJS()
 
   const = (x: number) => { return x; }
   distConst = (x: number) => { return 1; }
@@ -106,5 +128,5 @@ export class RNGSimulatorService {
 
   constructor() { }
   get rngJava() { return this._rngJava; }
-  get rngTs() { return this._rngTs; }
+  get rngJS() { return this._rngJS; }
 }
