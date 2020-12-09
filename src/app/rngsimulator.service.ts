@@ -95,7 +95,7 @@ class RngJS {
     let a = this._seed.a, b = this._seed.b, c = this._seed.c, d = this._seed.d;
     this._seed.a = c; this._seed.b = d;
 
-    var t = b << 9, r = a * 5; 
+    var t = b << 9, r = a * 5;
     r = (r << 7 | r >>> 25) * 9;
     c ^= a; d ^= b;
     b ^= c; a ^= d; c ^= t;
@@ -113,20 +113,24 @@ export interface RngGenerator {
 }
 
 export class RNGSimulatorService {
-  private _rngJava = new RngJava()
-  private _rngJS = new RngJS()
+  readonly rngJava = new RngJava()
+  readonly rngJS = new RngJS()
 
-  const = (x: number) => { return x; }
-  distConst = (x: number) => { return 1; }
-  ripConst = (x: number) => { return x; }
-  mixConst = (x: number) => { return 1; }
+  readonly const = (x: number) => { return x; }
+  readonly distConst = (x: number) => { return 1; }
+  readonly ripConst = (x: number) => { return x; }
+  readonly mixConst = (x: number) => { return x; }
+  readonly mixYConst = (y: number, x: number) => { return y; }
 
-  lin = (x: number) => { return Math.cbrt(x); }
-  distLin = (x: number) => { return 3 * Math.pow(x, 2); }
-  ripLin = (x: number) => { return Math.pow(x, 3); }
-  mixLin = (x: number) => { return 3 * x; }
+  readonly bis = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
+  readonly distBis = (x: number) => { return x; }
+  readonly ripBis = (x: number) => { return 1 / 2 * Math.pow(x * Math.SQRT2, 2); }
+  readonly mixBis = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
+  readonly mixYBis = (y: number, x: number) => { return y * x; }
 
-  constructor() { }
-  get rngJava() { return this._rngJava; }
-  get rngJS() { return this._rngJS; }
+  readonly lin = (x: number) => { return Math.cbrt(x); }
+  readonly distLin = (x: number) => { return 3 * Math.pow(x, 2); }
+  readonly ripLin = (x: number) => { return Math.pow(x, 3); }
+  readonly mixLin = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
+  readonly mixYLin = (y: number, x: number) => { return y * x * 3 }
 }

@@ -19,6 +19,7 @@ export class RngdataService {
   private _distFunction: Function;
   private _ripFunction: Function;
   private _mixFunction: Function;
+  private _mixYFunction: Function;
   private _rngGenerator: RngGenerator;
   private _randomNumber: number | undefined;
   private _randomNumbers: number[];
@@ -108,6 +109,7 @@ export class RngdataService {
         this._distFunction = this._rngSimulator.distConst;
         this._ripFunction = this._rngSimulator.ripConst;
         this._mixFunction = this._rngSimulator.mixConst;
+        this._mixYFunction = this._rngSimulator.mixYConst;
         this._maxRandomValue = 1;
         break;
       case "lin":
@@ -115,8 +117,16 @@ export class RngdataService {
         this._distFunction = this._rngSimulator.distLin;
         this._ripFunction = this._rngSimulator.ripLin;
         this._mixFunction = this._rngSimulator.mixLin;
+        this._mixYFunction = this._rngSimulator.mixYLin;
         this._maxRandomValue = 3;
         break;
+      case 'bis':
+        this._function = this._rngSimulator.bis;
+        this._distFunction = this._rngSimulator.distBis;
+        this._ripFunction = this._rngSimulator.ripBis;
+        this._mixFunction = this._rngSimulator.mixBis;
+        this._mixYFunction = this._rngSimulator.mixYBis;
+        this._maxRandomValue = 1;
       default:
         break;
     }
@@ -128,6 +138,8 @@ export class RngdataService {
         return 'const';
       case this._rngSimulator.lin:
         return 'lin'
+      case this._rngSimulator.bis:
+        return 'bis';
       default:
         break;
     }
@@ -307,8 +319,8 @@ export class RngdataService {
     let yAccepted: number[] = [];
 
     for (let i = 0; i < this.rep; i++) {
-      let xResult = this._rngGenerator.random();
-      let yResult = this._rngGenerator.random() * this._mixFunction(xResult);
+      let xResult = this._mixFunction(this._rngGenerator.random());
+      let yResult = this._mixYFunction(this._rngGenerator.random(), xResult);
       if (yResult < this._distFunction(xResult)) {
         xAccepted.push(xResult);
         yAccepted.push(yResult);

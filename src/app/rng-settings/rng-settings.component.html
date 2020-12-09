@@ -1,6 +1,7 @@
 <ul class="mt-3">
     <li>
         <h4>Impostazioni RNG</h4>
+        <br>
     </li>
     <li>
         <div class="form-group w-300p">
@@ -56,6 +57,9 @@
             <ul>
                 <li>
                     <input type="radio" name="options" value="const" checked="" [(ngModel)]="rngData.function"> `f(x) = k`
+                </li>
+                <li>
+                    <input type="radio" name="options" value="bis" [(ngModel)]="rngData.function"> `f(x) = x`
                 </li>
                 <li>
                     <input type="radio" name="options" value="lin" [(ngModel)]="rngData.function"> `f(x) = 3x^2`
