@@ -1,0 +1,116 @@
+<ul class="mt-3">
+    <li>
+        <h4>Impostazioni RNG</h4>
+    </li>
+    <li>
+        <div class="form-group w-300p">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="Tipo di generatore da usare per produrre i numeri casuali">Tipo di
+                        generatore:</span>
+                </div>
+                <select class="form-control" [(value)]="rngData.rngGenerator" (change)="selectChangeGenerator($event.target)">
+                    <option value="javascript">Javascript</option>
+                    <option value="java">Java</option>
+                </select>
+            </div>
+        </div>
+    </li>
+    <li *ngIf="rngData.seedNeeded">
+        <div class="form-group has-success w-300p">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="Seed da assegnare al generatore di numeri causali">Seed:</span>
+                </div>
+                <input [(ngModel)]="rngData.seed" type="number" class="form-control" min="1" oninput="validity.valid||(value='1');" [ngClass]="(rngData.seed < 1 || rngData.seed > rngData.maxSeed) ? 'is-invalid' : ''">
+                <div class="input-group-append">
+                    <input type="button" class="btn btn-primary" value="Time" (click)="setTimeSeed()" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left">
+                </div>
+                <div class="invalid-feedback">Il seed deve essere [0, {{rngData.maxSeed}}]</div>
+            </div>
+        </div>
+    </li>
+    <li *ngIf="!rngData.seedNeeded">
+        <div class="form-group has-success w-300p">
+            <p>Il seed non è supportato da questa API</p>
+        </div>
+    </li>
+    <li>
+        <div class="form-group w-300p">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="Tecnica che verrà usata per generare numeri casuali con la funzione di distribuzione selezionata">Tecnica
+                        da usare:</span>
+                </div>
+                <select class="form-control" [(value)]="rngData.random" (change)="selectChangeRandom($event.target)">
+                    <option value="dir">Diretta</option>
+                    <option value="rei">Reiezione</option>
+                    <option value="mix">Combinata</option>
+                </select>
+            </div>
+        </div>
+    </li>
+    <li>
+        <label>Funzione di distribuzione:</label>
+        <div class="btn-group btn-group-toggle">
+            <ul>
+                <li>
+                    <input type="radio" name="options" value="const" checked="" [(ngModel)]="rngData.function"> `f(x) = k`
+                </li>
+                <li>
+                    <input type="radio" name="options" value="lin" [(ngModel)]="rngData.function"> `f(x) = 3x^2`
+                </li>
+            </ul>
+        </div>
+    </li>
+    <br>
+    <!-- <li>
+        <div class="form-group">
+            <div class="input-group">
+                <input type="button" class="btn btn-primary" value="Genera numero casuale" (click)="generateRandomNumber()">
+                <div class="input-group-append">
+                    <span *ngIf="rngData.randomNumber" class="input-group-text">{{rngData.randomNumber}}</span>
+                </div>
+            </div>
+        </div>
+    </li> -->
+    <li>
+        <div class="form-group has-success w-300p">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="Quantità di numeri casuali generati da considerare per la statistica">Numeri da
+                        generare:</span>
+                </div>
+                <input [(ngModel)]="rngData.rep" class="form-control" type="number" min="1" placeholder="numero di prove" oninput="validity.valid||(value='1')" [ngClass]="(rngData.rep < 1 || rngData.rep > rngData.maxRep) ? 'is-invalid' : ''">
+                <div class="invalid-feedback">La numerosità del campione deve essere [0, {{rngData.maxRep}}]</div>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="form-group has-success w-300p">
+            <div class="input-group">
+                <input type="button" class="btn btn-primary" value="Genera i numeri" (click)="rngData.getRandomNumbers()">
+                <div class="input-group-append">
+                    <div class="btn btn-secondary disabled">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showNumbers" (change)="rngData.showNumbers = !rngData.showNumbers">
+                                Grafico
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="rngData.acc != -1" style="width: 65%;">
+            <span class="input-group-text">Punti accettati:
+                {{rngData.acc}}</span>
+
+            <span class="input-group-text">Punti rifiutati:
+                {{rngData.ref}}</span>
+
+            <span class="input-group-text">Rapporto accettati/totali:
+                {{rngData.rat}}</span>
+        </div>
+    </li>
+</ul>

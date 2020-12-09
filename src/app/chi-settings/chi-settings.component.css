@@ -1,3 +1,7 @@
 ul {
     list-style-type: none;
 }
+
+li {
+    margin-left: -30px;
+}

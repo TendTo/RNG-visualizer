@@ -1,0 +1,39 @@
+<ul class="mb-3">
+    <li>
+        <h4>Test del ` \chi^2 `</h4>
+    </li>
+    <li>
+        <div class="form-group has-success w-300p">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="Numero di intervalli in cui suddividere i risultati">Numero di
+                        intervalli:</span>
+                </div>
+                <input [(ngModel)]="rngData.n" type="number" class="form-control" min="1" placeholder="intervalli" oninput="validity.valid||(value='1');" [ngClass]="(rngData.n < 1 || rngData.n > rngData.maxN) ? 'is-invalid' : ''">
+                <div class="invalid-feedback">La numerosità del campione deve essere [0, {{rngData.maxN}}]</div>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="form-group has-success w-300p">
+            <div class="input-group">
+                <span *ngIf="!rngData.graphNumbers.data[0].x">Non sono stati ancora prodotti numeri casuali</span>
+                <input type="button" class="btn btn-primary" value="Avvia il test" (click)="rngData.startChi()" [disabled]="!rngData.graphNumbers.data[0].x">
+                <div class="input-group-append">
+                    <div class="btn btn-secondary disabled">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showChi" (change)="rngData.showChi = !rngData.showChi">
+                                Grafico
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="rngData.chiValue != -1" style="width: 40%;">
+            <span *ngIf="rngData.chiValue != -1" class="input-group-text">Valore stima:
+                {{rngData.chiValue.toPrecision(2)}}</span>
+        </div>
+    </li>
+</ul>

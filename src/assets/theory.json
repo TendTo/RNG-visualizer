@@ -1,0 +1,136 @@
+{
+    "list": [{
+            "title": "RNG",
+            "lines": [
+                "I generatori di numeri casuali (Random Number Generator) sono delle funzioni in grado di produrre una sequenza apparente casuale di numeri.",
+                "Gli RNG trovano molte applicazioni pratiche: esperimenti statistici, simulazioni, algoritmi probabilistici, videogames, crittografia...",
+                "Nonostante ogni algoritmo che un computer è in grado di eseguire è comunque deterministico, se il periodo è sufficientemente ampio si ha l'impressione che i numeri siano casuali.",
+                "Ciò significa, però, che se si è a conoscenza dell'algoritmo e del seed usato, si può prevedere esattamente l'intera sequenza."
+            ]
+        },
+        {
+            "title": "RNG basato su ricorrenze lineari",
+            "lines": [
+                "Un metodo molto efficiente di ottenere un RNG è quello di utilizzare le ricorrenze lineari, secondo questa formula:",
+                "`x_(n+1) = (a_0x_n+a_1 x_(n-1) + ... + a_j x_(n-j) ) mod P`",
+                "Questa tipologia di generatore necessita di `j+1` numeri iniziali ed è caratterizzato da un periodo",
+                "` T \\le P^(j+1) `",
+                "I valori generati e il periodo dipendono quindi da `P` e `a_j`"
+            ]
+        },
+        {
+            "title": "RNG moltiplicativo congruenziale",
+            "lines": [
+                "Può essere visto come un caso particolare, considerando un solo valore precedente",
+                "` x_(n+1) = \\lambdax_n mod P`",
+                "Al valore ottenuto viene poi applicate una funzione",
+                "` u_i = g(x_i) | g : \\bbb R -> [0, 1) `",
+                "In genere i generatori di numeri casuali nei linguaggi di programmazione utilizzano proprio un algoritmo di questa tipologia, relegando algoritmi più sicuri ma più lenti a librerie specializzate.",
+                "In questo caso, `P = 2^\\beta` con `\\beta` = lunghezza della parola in bit"
+            ]
+        },
+        {
+            "title": "JavaScript",
+            "lines": [
+                "L'algoritmo utilizzato dall' RNG di javascript non è stabilito a priori dalla libreria Math, ma viene utilizzata l'implementazione messa a disposizione dal browser.",
+                "Attualmente, però, la maggior parte dei browser utilizza l'algoritmo xorshift128+.\nSebbene si stato ammesso dagli stessi autori che i bit con meno valore non seguano una distribuzione esattamente ideale, la grande efficienza dell'algoritmo l'ha reso popolare.",
+                "Questa è una sua possibile implementazione"
+            ],
+            "code": [
+                "uint64_t s[2];",
+                "",
+                "uint64_t xorshift128plus(void) {",
+                "   uint64_t x = s[0];",
+                "   uint64_t const y = s[1];",
+                "   s[0] = y;",
+                "   x ^= x << 23; // a",
+                "   s[1] = x ^ y ^ (x >> 17) ^ (y >> 26); // b, c",
+                "   return s[1] + y;",
+                "}"
+            ]
+        },
+        {
+            "title": "Java",
+            "lines": [
+                "L'algoritmo utilizzato dall' RNG di Java si basa sulla formula matematica",
+                "` x_(n+1) = (25214903917x_i + 11) mod 2^(48)`",
+                "` u_i = (2^(27)[x_(2i)/2^(22)] + [x_(2i+1)/2^21])/ 2^(53)`",
+                "Le operazioni necessarie vengono poi eseguite in maniera efficiente dalla classe Random che produce il valore [0,1).",
+                "Questi sono i metodi principali"
+            ],
+            "code": [
+                "private long setSeed(long seed) {",
+                "   this.seed.set(seed ^ multiplier) & mask);",
+                "}",
+                "",
+                "protected int next(int bits) {",
+                "   long oldseed, nextseed;",
+                "   AtomicLong seed = this.seed;",
+                "   do {",
+                "       oldseed = seed.get();",
+                "       nextseed = (oldseed * multiplier + addend) & mask;",
+                "   } while (!seed.compareAndSet(oldseed, nextseed));",
+                "   return (int)(nextseed >>> (48 - bits));",
+                "}",
+                "",
+                "public double nextDouble() {",
+                "   return (((long)(next(26)) << 27) + next(27)) * DOUBLE_UNIT;",
+                "}"
+            ]
+        },
+        {
+            "title": "Test del ` \\chi^2 `",
+            "lines": [
+                "Il test del ` \\chi^2 ` può essere effettuato per verificare l'effettiva uniformità del generatore.",
+                "Diviso l'intervallo [0, 1) in k intervalli disgiunti, si verifica l'ipotesi che in ogni intervallo ricada lo stesso numero di risultati",
+                "Il valore indicativo si ottiene dalla formula",
+                "` \\chi^2 = sum_(i=1)^k (o_i - a_i)^2 / a_i = N sum_(i=1)^k (o_i/N - p_i)^2 / p_i`",
+                "indicando con `k` il numero di intervalli, `o_i` il valore osservato, `a_i` il valore atteso, `N` il numero di osservazioni e `p_i` il valore di probabilità per l'intervallo i-esimo.",
+                "L'uniformità viene può essere stimata a partire dal valore ottenuto, che tenderà a 0 quanto più il generatore si avvicina ad un'uniformità ideale."
+            ]
+        },
+        {
+            "title": "Up and Down test",
+            "lines": [
+                "Assegnata una sequenza di N numeri casuali, si assegna 1 se si ha un incremento del numero, altrimenti si assegna 0.",
+                "In una buona sequenza di numeri casuali non dovremmo avere un numero elevato di run di grande lunghezza.",
+                "Esistono delle formule che giudicano la bontà del generatore basandosi sul numero di run e la loro lunghezza.",
+                "n° run: ` (2N - 1)/3 `",
+                "n° run, lunghezza `k \\lt N-1 `: `(2[(k^2 + 3k + 1)N − (k^3 + 3k^2 − k − 4)])/((k+3)!) `",
+                "n° run, lunghezza `N-1 `: `2/(N!) `",
+                "Ci sono delle tavole che danno le regioni critiche al variare del numero di run e della loro lunghezza."
+            ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica diretta",
+            "lines": [
+                "Si consideri una funzione `f(x)` non negativa e continua in `[a, b]`, tale che `\\int_a^bf(x)dx = 1` e si chiami `F(x)` la sua primitiva",
+                "Si generi inoltre un numero casuale uniforme `r \\in [0, 1]` e si cerchi il valore `x_r \\in [a, b]` tale che",
+                "`r = F(x_r) = \\int_a^(x_r) f(t)dt`  e, se possibile,  `x_r = F^(-1)(r)`",
+                "Si dimostra che `x_r` ha una distribuzione di probabilità `f(x)`",
+                "Questo approccio, sebbene ideale matematicamente, non è sempre realizzabile, in quanto prevede l'esistenza sia la funzione primitiva che la sua inversa"
+            ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica della reiezione",
+            "lines": [
+                "Si consideri una funzione `f(x)` limitata in `[a, b]` e `c \\in \\RR_+` tale che",
+                "`f(x) <= c \\forall x \\in [a, b]`",
+                "Presi due numeri casuali `r_1, r_1^'` con distribuzione uniforme in `[0, 1]` e si calcola",
+                "`x_1 = a + (b-a)r_1` e `f_1 = r_1^'c`",
+                "Se `f_1<=f(x_1)` allora si prende `x_1` come nuovo numero casuale con distribuzione `f(x)`, altrimenti lo si rifiuta",
+                "Questo approccio è molto più semplice da realizzare, ma presenta uno spreco non sempre trascurabile di numeri che saranno rifiutati"
+            ]
+        },
+        {
+            "title": "RNG con densità arbitraria: tecnica combinata",
+            "lines": [
+                "Si consideri una funzione `f(x)` limitata in `[a, b]` e `g(x)` una funzione di distribuzione della probabilità tale che",
+                "`f(x) <= kg(x) \\forall x \\in [a, b]`",
+                "Presi due numeri casuali `x_1, r_1` con distribuzioni rispettivamente `g(x)` e uniforme in `[0, 1]` e si calcola",
+                "Si accetta `x_1` se `r_1k(g_1) < f(x_1)`, altrimenti si rifiuta il valore",
+                "Il vantaggio rispetto alla tecnica della reiezione è che la zone di rifiuto è più piccola, il che porta ad uno spreco inferiore di risorse"
+            ]
+        }
+    ]
+}

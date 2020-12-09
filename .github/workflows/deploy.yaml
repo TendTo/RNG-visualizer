@@ -1,0 +1,17 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Angular Deploy gh-pages Actions
+      uses: AhsanAyaz/angular-deploy-gh-pages-actions@v1.3.1
+      with:
+        github_access_token: ${{ secrets.ACCESS_TOKEN }} # code used to be able to use the github access token
+        build_configuration: production # The build environment for the app
+        base_href: https://tendto.github.io/RNG-visualizer/   # make sure this corresponds to https://<your_username>.github.io/<base_href>/
+        angular_dist_build_folder: dist/RNG-visualizer

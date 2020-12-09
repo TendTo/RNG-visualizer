@@ -1,0 +1,10 @@
+<div id="equation" class="row m-3">
+    <div *ngFor="let theory of theoryList" class="card card-dim text-white bg-secondary ml-1 mb-2 mr-1">
+        <div class="card-body">
+            <h4 class="card-title">{{theory.title}}</h4>
+            <hr>
+            <p *ngFor="let line of theory.lines" class="card-text">{{line}}</p>
+            <pre *ngIf="theory.code"><code><span *ngFor="let code of theory.code">{{code}}<br></span></code></pre>
+        </div>
+    </div>
+</div>
