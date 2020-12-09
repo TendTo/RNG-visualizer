@@ -81,24 +81,12 @@
         {
             "title": "Test del ` \\chi^2 `",
             "lines": [
-                "Il test del ` \\chi^2 ` può essere effettuato per verificare l'effettiva uniformità del generatore.",
-                "Diviso l'intervallo [0, 1) in k intervalli disgiunti, si verifica l'ipotesi che in ogni intervallo ricada lo stesso numero di risultati",
+                "Il test del ` \\chi^2 ` può essere effettuato per verificare l'effettiva uniformità del generatore o, più in generale, per verificare che i numeri casuali si distribuiscano secondo la funzione prevista.",
+                "Diviso l'intervallo [0, 1) in k intervalli disgiunti, si verifica l'ipotesi che in ogni intervallo ricada una percentuale di risultati prevista dalla funzione di distribuzione.",
                 "Il valore indicativo si ottiene dalla formula",
                 "` \\chi^2 = sum_(i=1)^k (o_i - a_i)^2 / a_i = N sum_(i=1)^k (o_i/N - p_i)^2 / p_i`",
                 "indicando con `k` il numero di intervalli, `o_i` il valore osservato, `a_i` il valore atteso, `N` il numero di osservazioni e `p_i` il valore di probabilità per l'intervallo i-esimo.",
                 "L'uniformità viene può essere stimata a partire dal valore ottenuto, che tenderà a 0 quanto più il generatore si avvicina ad un'uniformità ideale."
-            ]
-        },
-        {
-            "title": "Up and Down test",
-            "lines": [
-                "Assegnata una sequenza di N numeri casuali, si assegna 1 se si ha un incremento del numero, altrimenti si assegna 0.",
-                "In una buona sequenza di numeri casuali non dovremmo avere un numero elevato di run di grande lunghezza.",
-                "Esistono delle formule che giudicano la bontà del generatore basandosi sul numero di run e la loro lunghezza.",
-                "n° run: ` (2N - 1)/3 `",
-                "n° run, lunghezza `k \\lt N-1 `: `(2[(k^2 + 3k + 1)N − (k^3 + 3k^2 − k − 4)])/((k+3)!) `",
-                "n° run, lunghezza `N-1 `: `2/(N!) `",
-                "Ci sono delle tavole che danno le regioni critiche al variare del numero di run e della loro lunghezza."
             ]
         },
         {
@@ -128,9 +116,76 @@
                 "Si consideri una funzione `f(x)` limitata in `[a, b]` e `g(x)` una funzione di distribuzione della probabilità tale che",
                 "`f(x) <= kg(x) \\forall x \\in [a, b]`",
                 "Presi due numeri casuali `x_1, r_1` con distribuzioni rispettivamente `g(x)` e uniforme in `[0, 1]` e si calcola",
-                "Si accetta `x_1` se `r_1k(g_1) < f(x_1)`, altrimenti si rifiuta il valore",
+                "Si accetta `x_1` se `r_1kg(x) < f(x_1)`, altrimenti si rifiuta il valore",
                 "Il vantaggio rispetto alla tecnica della reiezione è che la zone di rifiuto è più piccola, il che porta ad uno spreco inferiore di risorse"
             ]
         }
-    ]
+    ],
+    "desc": {
+        "const": {
+            "title": "Distribuzione uniforme",
+            "dir": [
+                "Si prende direttamente il risultato fornito dal generatore"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 1`",
+                "`r_1` sarà accettato `<=> cr_2 = r_2 <= f(r_1) = 1`",
+                "In questo caso tutti i punti saranno accettati poichè la seconda parte dell'affermazione è sempre vera"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = 1` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 1`",
+                "`r_1` sarà accettato `<=> r_2kg(x) = r_2 <= f(r_1) = 1`",
+                "In questo caso tutti i punti saranno accettati poichè la seconda parte dell'affermazione è sempre vera"
+            ]
+        },
+        "bis": {
+            "title": "Distribuzione lineare",
+            "dir": [
+                "Si generi un numero casuale u",
+                "È possibile notare che `\\int_0^(\\sqrt2)xdx = 1`",
+                "Ne segue che la distribuzione richista si ottenga come",
+                "`u=\\int_0^(x_r)tdt = 1/2x_r^2 -> x_r = \\sqrt(2u)`"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = \\sqrt2`",
+                "`r_1` sarà accettato `<=> cr_2 <= f(r_1)`"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = x` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 1`",
+                "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
+            ]
+        },
+        "lin": {
+            "title": "Distribuzione parabolica",
+            "dir": [
+                "Si generi un numero casuale u",
+                "È possibile notare che `\\int_0^1(2x^3)dx = 1`",
+                "Ne segue che la distribuzione richista si ottenga come",
+                "`u=\\int_0^(x_r)tdt = x_r^3 -> x_r = \\root(3)(u)`"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 3`",
+                "`r_1` sarà accettato `<=> cr_2 <= f(r_1)`"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = x` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 3`",
+                "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
+            ]
+        }
+    },
+    "unused": [{
+        "title": "Up and Down test",
+        "lines": [
+            "Assegnata una sequenza di N numeri casuali, si assegna 1 se si ha un incremento del numero, altrimenti si assegna 0.",
+            "In una buona sequenza di numeri casuali non dovremmo avere un numero elevato di run di grande lunghezza.",
+            "Esistono delle formule che giudicano la bontà del generatore basandosi sul numero di run e la loro lunghezza.",
+            "n° run: ` (2N - 1)/3 `",
+            "n° run, lunghezza `k \\lt N-1 `: `(2[(k^2 + 3k + 1)N − (k^3 + 3k^2 − k − 4)])/((k+3)!) `",
+            "n° run, lunghezza `N-1 `: `2/(N!) `",
+            "Ci sono delle tavole che danno le regioni critiche al variare del numero di run e della loro lunghezza."
+        ]
+    }]
 }
