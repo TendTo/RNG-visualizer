@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { MathJaxService } from '../math-jax.service'
 import { RngdataService } from '../rngdata.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { RngdataService } from '../rngdata.service';
 })
 export class RngSettingsComponent {
 
-  constructor(public rngData: RngdataService) {
+  constructor(public rngData: RngdataService, public mathjax: MathJaxService) {
   }
 
   setTimeSeed() {
@@ -23,5 +24,15 @@ export class RngSettingsComponent {
 
   selectChangeRandom(element: HTMLInputElement){
     this.rngData.random = element.value;
+    this.render();
+  }
+
+  clickGenerateRandomNumbers(){
+    this.rngData.getRandomNumbers();
+    this.render();
+  }
+
+  render(){
+    setTimeout(this.mathjax.renderEquation, 100, '#equation');
   }
 }

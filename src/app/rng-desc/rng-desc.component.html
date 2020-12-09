@@ -1,0 +1,9 @@
+<div *ngIf="rngData.graphNumbers.data[0].x" class="ml-3" style="max-width: 600px;">
+    <div class="card card-dim text-white bg-secondary ml-1 mb-2 mr-1">
+        <div class="card-body">
+            <h4 class="card-title">{{descCard[rngData.function].title}}</h4>
+            <hr>
+            <p *ngFor="let line of descCard[rngData.function][rngData.random]" class="card-text">{{line}}</p>
+        </div>
+    </div>
+</div>

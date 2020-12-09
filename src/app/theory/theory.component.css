@@ -3,6 +3,6 @@ li {
 }
 
 .card-dim {
-    width: 730px;
-    max-width: 99%;
+    width: 48%;
+    min-width: 730px;
 }

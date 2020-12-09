@@ -16,6 +16,8 @@ import { PlotlyModule } from 'angular-plotly.js';
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { TheoryComponent } from './theory/theory.component';
 import { ChiPlotComponent } from './chi-plot/chi-plot.component';
+import { PlotDescComponent } from './plot-desc/plot-desc.component';
+import { RngDescComponent } from './rng-desc/rng-desc.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -27,6 +29,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     RngSettingsComponent,
     TheoryComponent,
     ChiPlotComponent,
+    PlotDescComponent,
+    RngDescComponent,
   ],
   imports: [
     BrowserModule,

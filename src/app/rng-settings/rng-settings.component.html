@@ -1,6 +1,7 @@
 <ul class="mt-3">
     <li>
         <h4>Impostazioni RNG</h4>
+        <h6>si assume che tutti i generatori siano uniformi in [0, 1)</h6>
         <br>
     </li>
     <li>
@@ -56,13 +57,13 @@
         <div class="btn-group btn-group-toggle">
             <ul>
                 <li>
-                    <input type="radio" name="options" value="const" checked="" [(ngModel)]="rngData.function"> `f(x) = k`
+                    <input type="radio" name="options" value="const" checked="" [(ngModel)]="rngData.function" (click)="render()"> `f(x) = k`
                 </li>
                 <li>
-                    <input type="radio" name="options" value="bis" [(ngModel)]="rngData.function"> `f(x) = x`
+                    <input type="radio" name="options" value="bis" [(ngModel)]="rngData.function" (click)="render()"> `f(x) = x`
                 </li>
                 <li>
-                    <input type="radio" name="options" value="lin" [(ngModel)]="rngData.function"> `f(x) = 3x^2`
+                    <input type="radio" name="options" value="lin" [(ngModel)]="rngData.function" (click)="render()"> `f(x) = 3x^2`
                 </li>
             </ul>
         </div>
@@ -93,12 +94,13 @@
     <li>
         <div class="form-group has-success w-300p">
             <div class="input-group">
-                <input type="button" class="btn btn-primary" value="Genera i numeri" (click)="rngData.getRandomNumbers()">
+                <input type="button" class="btn btn-primary" value="Genera i numeri" (click)="clickGenerateRandomNumbers()">
                 <div class="input-group-append">
                     <div class="btn btn-secondary disabled">
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showNumbers" (change)="rngData.showNumbers = !rngData.showNumbers">
+                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showNumbers"
+                                    (change)="rngData.showNumbers = !rngData.showNumbers">
                                 Grafico
                             </label>
                         </div>
