@@ -1,4 +1,4 @@
-class RngJava {
+class RngJava implements RngGenerator {
   private readonly p2_16 = 0x0000000010000;
   private readonly p2_27 = 0x0000008000000;
   private readonly p2_32 = 0x0000100000000;
@@ -51,7 +51,7 @@ class RngJava {
   }
 }
 
-class RngJS {
+class RngJS implements RngGenerator {
   private readonly p2_16 = 0x0000000010000;
   private readonly p2_27 = 0x0000008000000;
   private readonly p2_32 = 0x0000100000000;
@@ -106,31 +106,81 @@ class RngJS {
   }
 }
 
+class ConstFunction implements FunctionGroup {
+  readonly name = "const";
+  readonly minX = 0;
+  readonly maxX = 1;
+  readonly maxY = 1;
+  readonly direct = (x: number) => { return x; };
+  readonly distribution = (x: number) => { return 1; };
+  readonly cumulativeDistribution = (x: number) => { return x; };
+  readonly mixX = (x: number) => { return x; };
+  readonly mixY = (y: number, x: number) => { return y; };
+}
+
+class BisFunction implements FunctionGroup {
+  readonly name = "bis";
+  readonly minX = 0;
+  readonly maxX = Math.SQRT2;
+  readonly maxY = 1;
+  readonly direct = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
+  readonly distribution = (x: number) => { return x; };
+  readonly cumulativeDistribution = (x: number) => { return 0.5 * Math.pow(x * Math.SQRT2, 2); };
+  readonly mixX = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
+  readonly mixY = (y: number, x: number) => { return y * x; };
+}
+
+class LinFunction implements FunctionGroup {
+  readonly name = "lin";
+  readonly minX = 0;
+  readonly maxX = 1;
+  readonly maxY = 3;
+  readonly direct = (x: number) => { return Math.cbrt(x); };
+  readonly distribution = (x: number) => { return 3 * Math.pow(x, 2); };
+  readonly cumulativeDistribution = (x: number) => { return Math.pow(x, 3); };
+  readonly mixX = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
+  readonly mixY = (y: number, x: number) => { return y * x * 3 };
+}
+
+class CosFunction implements FunctionGroup {
+  readonly name = "cos";
+  readonly minX = 0;
+  readonly maxX = Math.PI / 2;
+  readonly maxY = 1;
+  readonly direct = (x: number) => { return Math.asin(x); };
+  readonly distribution = (x: number) => { return Math.cos(x); };
+  readonly cumulativeDistribution = (x: number) => { return Math.sin(x); };
+  readonly mixX = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
+  readonly mixY = (y: number, x: number) => { return y * x * 3 };
+}
+
 export interface RngGenerator {
   readonly seedNeeded: boolean;
   setSeed(seed: Number): void;
   random(): number;
 }
 
+export interface FunctionGroup {
+  readonly name: string;
+  readonly minX: number;
+  readonly maxX: number;
+  readonly maxY: number;
+  readonly direct: (x: number) => number;
+  readonly distribution: (x: number) => number;
+  readonly cumulativeDistribution: (x: number) => number;
+  readonly mixX: (x: number) => number;
+  readonly mixY: (y: number, x: number) => number;
+}
+
 export class RNGSimulatorService {
-  readonly rngJava = new RngJava()
-  readonly rngJS = new RngJS()
+  readonly rngJava = new RngJava();
+  readonly rngJS = new RngJS();
+  private readonly const = new ConstFunction();
+  private readonly bis = new BisFunction();
+  private readonly lin = new LinFunction();
+  private readonly cos = new CosFunction();
 
-  readonly const = (x: number) => { return x; }
-  readonly distConst = (x: number) => { return 1; }
-  readonly ripConst = (x: number) => { return x; }
-  readonly mixConst = (x: number) => { return x; }
-  readonly mixYConst = (y: number, x: number) => { return y; }
-
-  readonly bis = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
-  readonly distBis = (x: number) => { return x; }
-  readonly ripBis = (x: number) => { return 1 / 2 * Math.pow(x * Math.SQRT2, 2); }
-  readonly mixBis = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
-  readonly mixYBis = (y: number, x: number) => { return y * x; }
-
-  readonly lin = (x: number) => { return Math.cbrt(x); }
-  readonly distLin = (x: number) => { return 3 * Math.pow(x, 2); }
-  readonly ripLin = (x: number) => { return Math.pow(x, 3); }
-  readonly mixLin = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; }
-  readonly mixYLin = (y: number, x: number) => { return y * x * 3 }
+  getFunctionGroup(name: string): FunctionGroup {
+    return this[name];
+  }
 }

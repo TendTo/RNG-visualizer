@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { RngGenerator, RNGSimulatorService } from './rngsimulator.service'
+import { FunctionGroup, RngGenerator, RNGSimulatorService } from './rngsimulator.service'
 
 import * as chi from 'chi-squared';
 
@@ -17,15 +17,10 @@ export class RngdataService {
   public n = 10;
   public functionCoefficient = 1;
   private _random = this.randomDir;
-  private _function: Function;
-  private _distFunction: Function;
-  private _ripFunction: Function;
-  private _mixFunction: Function;
-  private _mixYFunction: Function;
+  private _functionGroup: FunctionGroup;
   private _rngGenerator: RngGenerator;
   private _randomNumber: number | undefined;
   private _randomNumbers: number[];
-  private _maxRandomValue = 1;
   private _chiValue = -1;
   private _df = -1;
   private _p_value = -1;
@@ -117,46 +112,15 @@ export class RngdataService {
   }
 
   set function(newFunction: string) {
-    switch (newFunction) {
-      case "const":
-        this._function = this._rngSimulator.const;
-        this._distFunction = this._rngSimulator.distConst;
-        this._ripFunction = this._rngSimulator.ripConst;
-        this._mixFunction = this._rngSimulator.mixConst;
-        this._mixYFunction = this._rngSimulator.mixYConst;
-        this._maxRandomValue = 1;
-        break;
-      case "lin":
-        this._function = this._rngSimulator.lin;
-        this._distFunction = this._rngSimulator.distLin;
-        this._ripFunction = this._rngSimulator.ripLin;
-        this._mixFunction = this._rngSimulator.mixLin;
-        this._mixYFunction = this._rngSimulator.mixYLin;
-        this._maxRandomValue = 3;
-        break;
-      case 'bis':
-        this._function = this._rngSimulator.bis;
-        this._distFunction = this._rngSimulator.distBis;
-        this._ripFunction = this._rngSimulator.ripBis;
-        this._mixFunction = this._rngSimulator.mixBis;
-        this._mixYFunction = this._rngSimulator.mixYBis;
-        this._maxRandomValue = 1;
-      default:
-        break;
+    try {
+      this._functionGroup = this._rngSimulator.getFunctionGroup(newFunction);
+    } catch (error) {
+      console.log("Valore non previsto: " + newFunction);
     }
   }
 
   get function(): string {
-    switch (this._function) {
-      case this._rngSimulator.const:
-        return 'const';
-      case this._rngSimulator.lin:
-        return 'lin'
-      case this._rngSimulator.bis:
-        return 'bis';
-      default:
-        break;
-    }
+    return this._functionGroup.name;
   }
 
   set random(newRandom: string) {
@@ -230,7 +194,7 @@ export class RngdataService {
       xAxis[i] = interval * (i + 1);
     }
 
-    let idealDist = xAxis.map(e => this._distFunction(e));
+    let idealDist = xAxis.map(e => this._functionGroup.distribution(e));
     let tot = idealDist.reduce((s, e) => s + e);
     idealDist = idealDist.map(e => e / tot);
 
@@ -252,13 +216,13 @@ export class RngdataService {
     } catch (error) {
       this._p_value = -1;
     }
-    
+
 
     this._graphChi.data[0].x = xAxis;
     this._graphChi.data[0].y = idealDist;
 
     this._graphChi.data[1].x = xAxis;
-    this._graphChi.data[1].y = xAxis.map(e => this._ripFunction(e))
+    this._graphChi.data[1].y = xAxis.map(e => this._functionGroup.cumulativeDistribution(e))
 
     this._graphChi.data[2].x = xAxis;
     this._graphChi.data[2].y = distribution.map(e => e / nOldResults);
@@ -275,8 +239,8 @@ export class RngdataService {
     let yAccepted: number[] = [];
 
     for (let i = 0; i < this.rep; i++) {
-      let xResult = this._function(this._rngGenerator.random());
-      let yResult = this._rngGenerator.random() * this._distFunction(xResult);
+      let xResult = this._functionGroup.direct(this._rngGenerator.random());
+      let yResult = this._rngGenerator.random() * this._functionGroup.distribution(xResult);
       xAccepted.push(xResult);
       yAccepted.push(yResult);
     }
@@ -306,8 +270,8 @@ export class RngdataService {
 
     for (let i = 0; i < this.rep; i++) {
       let xResult = this._rngGenerator.random();
-      let yResult = this._rngGenerator.random() * this._maxRandomValue;
-      if (yResult < this._distFunction(xResult)) {
+      let yResult = this._rngGenerator.random() * this._functionGroup.maxY;
+      if (yResult < this._functionGroup.distribution(xResult)) {
         xAccepted.push(xResult);
         yAccepted.push(yResult);
       }
@@ -341,9 +305,9 @@ export class RngdataService {
     let yAccepted: number[] = [];
 
     for (let i = 0; i < this.rep; i++) {
-      let xResult = this._mixFunction(this._rngGenerator.random());
-      let yResult = this._mixYFunction(this._rngGenerator.random(), xResult);
-      if (yResult < this._distFunction(xResult)) {
+      let xResult = this._functionGroup.mixX(this._rngGenerator.random());
+      let yResult = this._functionGroup.mixY(this._rngGenerator.random(), xResult);
+      if (yResult < this._functionGroup.distribution(xResult)) {
         xAccepted.push(xResult);
         yAccepted.push(yResult);
       }
