@@ -14,6 +14,7 @@ import { TheoryDataService } from './theory-data.service';
 
 import { PlotlyModule } from 'angular-plotly.js';
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+
 import { TheoryComponent } from './theory/theory.component';
 import { ChiPlotComponent } from './chi-plot/chi-plot.component';
 import { PlotDescComponent } from './plot-desc/plot-desc.component';

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core'
 import { RngGenerator, RNGSimulatorService } from './rngsimulator.service'
 
+import * as chi from 'chi-squared';
+
 @Injectable()
 export class RngdataService {
   readonly maxSeed = 10000000000000;
@@ -25,6 +27,8 @@ export class RngdataService {
   private _randomNumbers: number[];
   private _maxRandomValue = 1;
   private _chiValue = -1;
+  private _df = -1;
+  private _p_value = -1;
   private _acc = -1;
   private _ref = -1;
   private _rat = -1;
@@ -100,6 +104,16 @@ export class RngdataService {
 
   get rat(): number {
     return this._rat;
+  }
+
+  get df(): number {
+    return this._df;
+  }
+
+  get p_value(): string {
+    if (this._p_value == -1)
+      return "Gradi di libertà insufficienti";
+    return this._p_value.toPrecision(3);
   }
 
   set function(newFunction: string) {
@@ -210,6 +224,7 @@ export class RngdataService {
     let oldResults = this._randomNumbers;
     let nOldResults = this._randomNumbers.length;
     this._chiValue = 0;
+    this._df = this.n - 1;
 
     for (let i = 0; i < this.n; i++) {
       xAxis[i] = interval * (i + 1);
@@ -231,6 +246,13 @@ export class RngdataService {
     for (let i = 0; i < this.n; i++) {
       this._chiValue += nOldResults * Math.pow(distribution[i] / nOldResults - idealDist[i], 2) / (idealDist[i]);
     }
+
+    try {
+      this._p_value = 1 - chi.cdf(this.chiValue, this._df);
+    } catch (error) {
+      this._p_value = -1;
+    }
+    
 
     this._graphChi.data[0].x = xAxis;
     this._graphChi.data[0].y = idealDist;

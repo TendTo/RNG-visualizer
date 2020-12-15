@@ -21,6 +21,7 @@
     "@angular/router": "~10.0.14",
     "@types/plotly.js": "^1.54.3",
     "angular-plotly.js": "^3.0.0",
+    "chi-squared": "^1.1.0",
     "plotly.js": "^1.58.0",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",

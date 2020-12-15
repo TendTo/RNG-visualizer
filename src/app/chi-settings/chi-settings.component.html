@@ -1,4 +1,4 @@
-<ul class="mb-3">
+<ul class="mb-3 mt-3">
     <li>
         <h4>Test del ` \chi^2 `</h4>
         <h6>per la bontà dell'adattamento</h6>
@@ -25,7 +25,8 @@
                     <div class="btn btn-secondary disabled">
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showChi" (change)="rngData.showChi = !rngData.showChi">
+                                <input class="form-check-input" type="checkbox" [ngModel]="rngData.showChi"
+                                    (change)="rngData.showChi = !rngData.showChi">
                                 Grafico
                             </label>
                         </div>
@@ -33,10 +34,14 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="rngData.chiValue != -1" style="max-width: 60%;">
-            <span *ngIf="rngData.chiValue != -1" class="input-group-text">Valore ottenuto dal test:
-                {{rngData.chiValue.toPrecision(2)}}</span>
-            <span *ngIf="rngData.chiValue != -1" class="ml-2">Vedi la teoria per conoscere la formula</span>
-        </div>
+    </li>
+    <li *ngIf="rngData.chiValue != -1" style="max-width: 70%;">
+        <span class="input-group-text">Valore ottenuto dal test:
+            {{rngData.chiValue.toPrecision(2)}}</span>
+        <!-- <span class="ml-2">Vedi la teoria per conoscere la formula</span> -->
+        <span class="input-group-text">Gradi di libertà:
+            {{rngData.df}}</span>
+        <span class="input-group-text">P-value:
+            {{rngData.p_value}}</span>
     </li>
 </ul>
