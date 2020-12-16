@@ -21,12 +21,8 @@ export class RngdataService {
   private _rngGenerator: RngGenerator;
   private _randomNumber: number | undefined;
   private _randomNumbers: number[];
-  private _chiValue = -1;
-  private _df = -1;
-  private _p_value = -1;
-  private _acc = -1;
-  private _ref = -1;
-  private _rat = -1;
+  private _chi = { value: -1, df: -1, p_value: -1 };
+  private _rngResult = { acc: -1, ref: -1, rat: -1 };
 
   private _graphNumbers = {
     data: [
@@ -86,37 +82,33 @@ export class RngdataService {
   }
 
   get chiValue(): number {
-    return this._chiValue;
+    return this._chi.value;
   }
 
   get acc(): number {
-    return this._acc;
+    return this._rngResult.acc;
   }
 
   get ref(): number {
-    return this._ref;
+    return this._rngResult.ref;
   }
 
   get rat(): number {
-    return this._rat;
+    return this._rngResult.rat;
   }
 
   get df(): number {
-    return this._df;
+    return this._chi.df;
   }
 
   get p_value(): string {
-    if (this._p_value == -1)
+    if (this._chi.p_value == -1)
       return "Gradi di libertà insufficienti";
-    return this._p_value.toPrecision(3);
+    return this._chi.p_value.toPrecision(3);
   }
 
   set function(newFunction: string) {
-    try {
-      this._functionGroup = this._rngSimulator.getFunctionGroup(newFunction);
-    } catch (error) {
-      console.log("Valore non previsto: " + newFunction);
-    }
+    this._functionGroup = this._rngSimulator.getFunctionGroup(newFunction);
   }
 
   get function(): string {
@@ -187,14 +179,15 @@ export class RngdataService {
     let xAxis = new Array<number>(this.n);
     let oldResults = this._randomNumbers;
     let nOldResults = this._randomNumbers.length;
-    this._chiValue = 0;
-    this._df = this.n - 1;
+    this._chi.value = 0;
+    this._chi.df = this.n - 1;
 
     for (let i = 0; i < this.n; i++) {
       xAxis[i] = interval * (i + 1);
     }
 
-    let idealDist = xAxis.map(e => this._functionGroup.distribution(e));
+    let idealDist = xAxis
+      .map(e => this._functionGroup.distribution(this._functionGroup.minX + e * this._functionGroup.interval));
     let tot = idealDist.reduce((s, e) => s + e);
     idealDist = idealDist.map(e => e / tot);
 
@@ -208,13 +201,13 @@ export class RngdataService {
       cumulative[i] = distribution[i] + cumulative[i - 1];
 
     for (let i = 0; i < this.n; i++) {
-      this._chiValue += nOldResults * Math.pow(distribution[i] / nOldResults - idealDist[i], 2) / (idealDist[i]);
+      this._chi.value += nOldResults * Math.pow(distribution[i] / nOldResults - idealDist[i], 2) / (idealDist[i]);
     }
 
     try {
-      this._p_value = 1 - chi.cdf(this.chiValue, this._df);
+      this._chi.p_value = 1 - chi.cdf(this.chiValue, this._chi.df);
     } catch (error) {
-      this._p_value = -1;
+      this._chi.p_value = -1;
     }
 
 
@@ -222,7 +215,7 @@ export class RngdataService {
     this._graphChi.data[0].y = idealDist;
 
     this._graphChi.data[1].x = xAxis;
-    this._graphChi.data[1].y = xAxis.map(e => this._functionGroup.cumulativeDistribution(e))
+    this._graphChi.data[1].y = xAxis.map(e => this._functionGroup.cumulativeDistribution(this._functionGroup.minX + e * this._functionGroup.interval));
 
     this._graphChi.data[2].x = xAxis;
     this._graphChi.data[2].y = distribution.map(e => e / nOldResults);
@@ -245,8 +238,8 @@ export class RngdataService {
       yAccepted.push(yResult);
     }
 
-    this._chiValue = -1;
-    this._randomNumbers = xAccepted;
+    this._chi.value = -1;
+    this._randomNumbers = xAccepted.map(e => - this._functionGroup.minX + e / this._functionGroup.interval);
 
     this._graphNumbers.data[0].x = xAccepted;
     this._graphNumbers.data[0].y = yAccepted;
@@ -254,26 +247,27 @@ export class RngdataService {
     this._graphNumbers.data[1].x = undefined;
     this._graphNumbers.data[1].y = undefined;
 
-    this._acc = xAccepted.length;
-    this._ref = 0;
-    this._rat = 1;
+    this._rngResult = { acc: xAccepted.length, ref: 0, rat: 1 };
   }
 
   private randomRei() {
     this.validateInputs();
     this._rngGenerator.setSeed(this.seed);
 
+    this._randomNumbers = [];
     let xRefused: number[] = [];
     let yRefused: number[] = [];
     let xAccepted: number[] = [];
     let yAccepted: number[] = [];
 
     for (let i = 0; i < this.rep; i++) {
-      let xResult = this._rngGenerator.random();
+      let x = this._rngGenerator.random();
+      let xResult = this._functionGroup.minX + x * this._functionGroup.interval;
       let yResult = this._rngGenerator.random() * this._functionGroup.maxY;
       if (yResult < this._functionGroup.distribution(xResult)) {
         xAccepted.push(xResult);
         yAccepted.push(yResult);
+        this._randomNumbers.push(x);
       }
       else {
         xRefused.push(xResult);
@@ -281,8 +275,7 @@ export class RngdataService {
       }
     }
 
-    this._chiValue = -1;
-    this._randomNumbers = xAccepted;
+    this._chi.value = -1;
 
     this._graphNumbers.data[0].x = xAccepted;
     this._graphNumbers.data[0].y = yAccepted;
@@ -290,26 +283,27 @@ export class RngdataService {
     this._graphNumbers.data[1].x = xRefused;
     this._graphNumbers.data[1].y = yRefused;
 
-    this._acc = xAccepted.length;
-    this._ref = xRefused.length;
-    this._rat = xAccepted.length / this.rep;
+    this._rngResult = { acc: xAccepted.length, ref: xRefused.length, rat: xAccepted.length / this.rep };
   }
 
   private randomMix() {
     this.validateInputs();
     this._rngGenerator.setSeed(this.seed);
 
+    this._randomNumbers = [];
     let xRefused: number[] = [];
     let yRefused: number[] = [];
     let xAccepted: number[] = [];
     let yAccepted: number[] = [];
 
     for (let i = 0; i < this.rep; i++) {
-      let xResult = this._functionGroup.mixX(this._rngGenerator.random());
+      let x = this._functionGroup.mixX(this._rngGenerator.random());
+      let xResult = this._functionGroup.minX + x * this._functionGroup.interval;
       let yResult = this._functionGroup.mixY(this._rngGenerator.random(), xResult);
       if (yResult < this._functionGroup.distribution(xResult)) {
         xAccepted.push(xResult);
         yAccepted.push(yResult);
+        this._randomNumbers.push(x);
       }
       else {
         xRefused.push(xResult);
@@ -317,8 +311,8 @@ export class RngdataService {
       }
     }
 
-    this._chiValue = -1;
-    this._randomNumbers = xAccepted;
+    this._chi.value = -1;
+    // this._randomNumbers = xAccepted;
 
     this._graphNumbers.data[0].x = xAccepted;
     this._graphNumbers.data[0].y = yAccepted;
@@ -326,8 +320,6 @@ export class RngdataService {
     this._graphNumbers.data[1].x = xRefused;
     this._graphNumbers.data[1].y = yRefused;
 
-    this._acc = xAccepted.length;
-    this._ref = xRefused.length;
-    this._rat = xAccepted.length / this.rep;
+    this._rngResult = { acc: xAccepted.length, ref: xRefused.length, rat: xAccepted.length / this.rep };
   }
 }

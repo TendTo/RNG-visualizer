@@ -111,6 +111,9 @@ class ConstFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = 1;
   readonly maxY = 1;
+  get interval(): number{
+    return this.maxX - this.minX;
+  };
   readonly direct = (x: number) => { return x; };
   readonly distribution = (x: number) => { return 1; };
   readonly cumulativeDistribution = (x: number) => { return x; };
@@ -122,10 +125,13 @@ class BisFunction implements FunctionGroup {
   readonly name = "bis";
   readonly minX = 0;
   readonly maxX = Math.SQRT2;
-  readonly maxY = 1;
-  readonly direct = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
+  readonly maxY = Math.SQRT2;
+  get interval(): number{
+    return this.maxX - this.minX;
+  };
+  readonly direct = (x: number) => { return Math.sqrt(2 * x); };
   readonly distribution = (x: number) => { return x; };
-  readonly cumulativeDistribution = (x: number) => { return 0.5 * Math.pow(x * Math.SQRT2, 2); };
+  readonly cumulativeDistribution = (x: number) => { return 0.5 * Math.pow(x, 2); };
   readonly mixX = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
   readonly mixY = (y: number, x: number) => { return y * x; };
 }
@@ -135,6 +141,9 @@ class LinFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = 1;
   readonly maxY = 3;
+  get interval(): number{
+    return this.maxX - this.minX;
+  };
   readonly direct = (x: number) => { return Math.cbrt(x); };
   readonly distribution = (x: number) => { return 3 * Math.pow(x, 2); };
   readonly cumulativeDistribution = (x: number) => { return Math.pow(x, 3); };
@@ -147,11 +156,14 @@ class CosFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = Math.PI / 2;
   readonly maxY = 1;
+  get interval(): number{
+    return this.maxX - this.minX;
+  };
   readonly direct = (x: number) => { return Math.asin(x); };
   readonly distribution = (x: number) => { return Math.cos(x); };
   readonly cumulativeDistribution = (x: number) => { return Math.sin(x); };
-  readonly mixX = (x: number) => { return Math.sqrt(2 * x) / Math.SQRT2; };
-  readonly mixY = (y: number, x: number) => { return y * x * 3 };
+  readonly mixX = (x: number) => { return x; };
+  readonly mixY = (y: number, x: number) => { return y; };
 }
 
 export interface RngGenerator {
@@ -165,6 +177,7 @@ export interface FunctionGroup {
   readonly minX: number;
   readonly maxX: number;
   readonly maxY: number;
+  readonly interval: number;
   readonly direct: (x: number) => number;
   readonly distribution: (x: number) => number;
   readonly cumulativeDistribution: (x: number) => number;
