@@ -111,7 +111,7 @@ class ConstFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = 1;
   readonly maxY = 1;
-  get interval(): number{
+  get interval(): number {
     return this.maxX - this.minX;
   };
   readonly direct = (x: number) => { return x; };
@@ -126,7 +126,7 @@ class BisFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = Math.SQRT2;
   readonly maxY = Math.SQRT2;
-  get interval(): number{
+  get interval(): number {
     return this.maxX - this.minX;
   };
   readonly direct = (x: number) => { return Math.sqrt(2 * x); };
@@ -141,7 +141,7 @@ class LinFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = 1;
   readonly maxY = 3;
-  get interval(): number{
+  get interval(): number {
     return this.maxX - this.minX;
   };
   readonly direct = (x: number) => { return Math.cbrt(x); };
@@ -156,12 +156,27 @@ class CosFunction implements FunctionGroup {
   readonly minX = 0;
   readonly maxX = Math.PI / 2;
   readonly maxY = 1;
-  get interval(): number{
+  get interval(): number {
     return this.maxX - this.minX;
   };
   readonly direct = (x: number) => { return Math.asin(x); };
   readonly distribution = (x: number) => { return Math.cos(x); };
   readonly cumulativeDistribution = (x: number) => { return Math.sin(x); };
+  readonly mixX = (x: number) => { return x; };
+  readonly mixY = (y: number, x: number) => { return y; };
+}
+
+class InvFunction implements FunctionGroup {
+  readonly name = "inv";
+  readonly minX = 1;
+  readonly maxX = Math.E;
+  readonly maxY = 1;
+  get interval(): number {
+    return this.maxX - this.minX;
+  };
+  readonly direct = (x: number) => { return Math.exp(x); };
+  readonly distribution = (x: number) => { return 1 / x; };
+  readonly cumulativeDistribution = (x: number) => { return Math.log(x); };
   readonly mixX = (x: number) => { return x; };
   readonly mixY = (y: number, x: number) => { return y; };
 }
@@ -192,6 +207,7 @@ export class RNGSimulatorService {
   private readonly bis = new BisFunction();
   private readonly lin = new LinFunction();
   private readonly cos = new CosFunction();
+  private readonly inv = new InvFunction();
 
   getFunctionGroup(name: string): FunctionGroup {
     return this[name];

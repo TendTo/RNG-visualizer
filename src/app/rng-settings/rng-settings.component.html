@@ -68,20 +68,13 @@
                 <li>
                     <input type="radio" name="options" value="cos" [(ngModel)]="rngData.function" (click)="render()"> `f(x) = cos(x)`
                 </li>
+                <li>
+                    <input type="radio" name="options" value="inv" [(ngModel)]="rngData.function" (click)="render()"> `f(x) = 1/x`
+                </li>
             </ul>
         </div>
     </li>
     <br>
-    <!-- <li>
-        <div class="form-group">
-            <div class="input-group">
-                <input type="button" class="btn btn-primary" value="Genera numero casuale" (click)="generateRandomNumber()">
-                <div class="input-group-append">
-                    <span *ngIf="rngData.randomNumber" class="input-group-text">{{rngData.randomNumber}}</span>
-                </div>
-            </div>
-        </div>
-    </li> -->
     <li>
         <div class="form-group has-success w-300p">
             <div class="input-group">

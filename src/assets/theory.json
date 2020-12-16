@@ -192,6 +192,24 @@
                 "Si consideri inoltre `k = 1`",
                 "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
             ]
+        },
+        "inv": {
+            "title": "Distribuzione inversa",
+            "dir": [
+                "Si generi un numero casuale u",
+                "È possibile notare che `\\int_1^(e)(1/X)dx = 1`",
+                "Ne segue che la distribuzione richiesta si ottenga come",
+                "`u=\\int_1^(x_r)(1/t)dt = ln(x_r) -> x_r = e^u`"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 1`",
+                "`r_1` sarà accettato `<=> cr_2 <= f(r_1)`"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = 1` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 1`",
+                "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
+            ]
         }
     },
     "unused": [{

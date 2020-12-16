@@ -239,7 +239,7 @@ export class RngdataService {
     }
 
     this._chi.value = -1;
-    this._randomNumbers = xAccepted.map(e => - this._functionGroup.minX + e / this._functionGroup.interval);
+    this._randomNumbers = xAccepted.map(e => (e - this._functionGroup.minX) / this._functionGroup.interval);
 
     this._graphNumbers.data[0].x = xAccepted;
     this._graphNumbers.data[0].y = yAccepted;
