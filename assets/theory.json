@@ -144,7 +144,7 @@
             "dir": [
                 "Si generi un numero casuale u",
                 "È possibile notare che `\\int_0^(\\sqrt2)xdx = 1`",
-                "Ne segue che la distribuzione richista si ottenga come",
+                "Ne segue che la distribuzione richiesta si ottenga come",
                 "`u=\\int_0^(x_r)tdt = 1/2x_r^2 -> x_r = \\sqrt(2u)`"
             ],
             "rei": [
@@ -161,9 +161,9 @@
             "title": "Distribuzione parabolica",
             "dir": [
                 "Si generi un numero casuale u",
-                "È possibile notare che `\\int_0^1(2x^3)dx = 1`",
-                "Ne segue che la distribuzione richista si ottenga come",
-                "`u=\\int_0^(x_r)tdt = x_r^3 -> x_r = \\root(3)(u)`"
+                "È possibile notare che `\\int_0^1 3x^2dx = 1`",
+                "Ne segue che la distribuzione richiesta si ottenga come",
+                "`u=\\int_0^(x_r)3t^2dt = x_r^3 -> x_r = \\root(3)(u)`"
             ],
             "rei": [
                 "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 3`",
@@ -172,6 +172,42 @@
             "mix": [
                 "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = x` e `r_2` una uniforme.",
                 "Si consideri inoltre `k = 3`",
+                "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
+            ]
+        },
+        "cos": {
+            "title": "Distribuzione cosinusoidale",
+            "dir": [
+                "Si generi un numero casuale u",
+                "È possibile notare che `\\int_0^(\\pi/2)cos(x)dx = 1`",
+                "Ne segue che la distribuzione richiesta si ottenga come",
+                "`u=\\int_0^(x_r)cos(t)dt = sin(x_r) -> x_r = sin^-1(u)`"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 1`",
+                "`r_1` sarà accettato `<=> cr_2 <= f(r_1)`"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = 1` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 1`",
+                "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
+            ]
+        },
+        "inv": {
+            "title": "Distribuzione inversa",
+            "dir": [
+                "Si generi un numero casuale u",
+                "È possibile notare che `\\int_1^(e)(1/X)dx = 1`",
+                "Ne segue che la distribuzione richiesta si ottenga come",
+                "`u=\\int_1^(x_r)(1/t)dt = ln(x_r) -> x_r = e^u`"
+            ],
+            "rei": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` con distribuzione uniforme e si consideri `c = 1`",
+                "`r_1` sarà accettato `<=> cr_2 <= f(r_1)`"
+            ],
+            "mix": [
+                "Si generi la coppia di numeri casuali `(r_1,  r_2)` in modo che `r_1` abbia una distribuzione `g(x) = 1` e `r_2` una uniforme.",
+                "Si consideri inoltre `k = 1`",
                 "`r_1` sarà accettato `<=> r_2kg(x) <= f(r_1)`"
             ]
         }
