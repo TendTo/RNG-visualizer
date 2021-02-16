@@ -174,7 +174,7 @@ export class RngdataService {
 
   startChi() {
     const interval = 1 / this.n;
-    let distribution = new Array<number>(this.n).fill(0);
+    let distributionFreq = new Array<number>(this.n).fill(0);
     let cumulative = new Array<number>(this.n);
     let xAxis = new Array<number>(this.n);
     let oldResults = this._randomNumbers;
@@ -187,21 +187,22 @@ export class RngdataService {
     }
 
     let idealDist = xAxis
-      .map(e => this._functionGroup.distribution(this._functionGroup.minX + e * this._functionGroup.interval));
+      .map(e => this._functionGroup.distribution(this._functionGroup.minX + (e - interval / 2) * this._functionGroup.interval));
     let tot = idealDist.reduce((s, e) => s + e);
     idealDist = idealDist.map(e => e / tot);
+    let idealDistFreq = idealDist.map(e => nOldResults * e);
 
     for (let i = 0; i < nOldResults; i++) {
       let group = Math.floor(oldResults[i] * this.n);
-      distribution[group]++;
+      distributionFreq[group]++;
     }
 
-    cumulative[0] = distribution[0];
+    cumulative[0] = distributionFreq[0];
     for (let i = 1; i <= this.n; i++)
-      cumulative[i] = distribution[i] + cumulative[i - 1];
+      cumulative[i] = distributionFreq[i] + cumulative[i - 1];
 
     for (let i = 0; i < this.n; i++) {
-      this._chi.value += nOldResults * Math.pow(distribution[i] / nOldResults - idealDist[i], 2) / (idealDist[i]);
+      this._chi.value += Math.pow(distributionFreq[i] - idealDistFreq[i], 2) / (idealDistFreq[i]);
     }
 
     try {
@@ -218,7 +219,7 @@ export class RngdataService {
     this._graphChi.data[1].y = xAxis.map(e => this._functionGroup.cumulativeDistribution(this._functionGroup.minX + e * this._functionGroup.interval));
 
     this._graphChi.data[2].x = xAxis;
-    this._graphChi.data[2].y = distribution.map(e => e / nOldResults);
+    this._graphChi.data[2].y = distributionFreq.map(e => e / nOldResults);
 
     this._graphChi.data[3].x = xAxis;
     this._graphChi.data[3].y = cumulative.map(e => e / nOldResults);
